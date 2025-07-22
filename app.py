@@ -3,7 +3,7 @@ import os
 import glob
 import jnius_config
 
-# Thiết lập classpath cho JVM trước khi import bất kỳ gì dùng jnius....
+# Thiết lập classpath cho JVM trước khi import bất kỳ gì dùng jnius
 vncorenlp_dir = "/opt/chatbot_env/vncorenlp"
 jar_path = os.path.join(vncorenlp_dir, "VnCoreNLP-1.2.jar")
 libs_jars = glob.glob(os.path.join(vncorenlp_dir, "libs", "*.jar"))
