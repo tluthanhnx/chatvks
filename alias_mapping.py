@@ -1,6 +1,12 @@
 alias_mapping = {
     "vụ án": "Select * from spp_case where upper(CASENAME)=upper('{value}')",
-    "bị can": "spp_accused",
+    "danh sách bị can trong vụ án": """
+        SELECT ACCUCODE, FULLNAME, BIRTHDAY, SEX, CRIMDATE, CRTDATE, LAWCODE
+        FROM spp_accused
+        WHERE CASECODE IN (
+            SELECT CASECODE FROM spp_case WHERE UPPER(CASENAME) = UPPER('{value}')
+        )
+    """,
     "tội danh bị can": "spp_accusedlaw",
     "kháng nghị": "spp_against",
     "kháng cáo": "spp_appeal",
