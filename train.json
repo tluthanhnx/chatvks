@@ -1,0 +1,72 @@
+{"question": "Vụ án Nguyễn Văn A", "sql": "Select * from spp_accused where FULLNAME like '%Nguyễn Văn A%';"}
+{"question": "Tìm vụ án theo quyết định số ABC", "sql": "Select * from spp_case where BEGIN_INDATE = 'ABC';"}
+{"question": "Có bao nhiêu bản ghi trong bảng vụ án?", "sql": "SELECT COUNT(*) FROM spp_case"}
+{"question": "Có bao nhiêu bản ghi trong bảng bị can?", "sql": "SELECT COUNT(*) FROM spp_accused"}
+{"question": "Có bao nhiêu bản ghi trong bảng tội danh bị can?", "sql": "SELECT COUNT(*) FROM spp_accusedlaw"}
+{"question": "Có bao nhiêu bản ghi trong bảng kháng nghị?", "sql": "SELECT COUNT(*) FROM spp_against"}
+{"question": "Có bao nhiêu bản ghi trong bảng kháng cáo?", "sql": "SELECT COUNT(*) FROM spp_appeal"}
+{"question": "Có bao nhiêu bản ghi trong bảng bị cáo kháng cáo?", "sql": "SELECT COUNT(*) FROM spp_appealacc"}
+{"question": "Có bao nhiêu bản ghi trong bảng luật vụ án?", "sql": "SELECT COUNT(*) FROM spp_caselaw"}
+{"question": "Có bao nhiêu bản ghi trong bảng trung tâm luật?", "sql": "SELECT COUNT(*) FROM spp_cenlaw"}
+{"question": "Có bao nhiêu bản ghi trong bảng trung tâm luật hình phạt?", "sql": "SELECT COUNT(*) FROM spp_cenlawpenalty"}
+{"question": "Có bao nhiêu bản ghi trong bảng trung tâm luật viện kiểm sát?", "sql": "SELECT COUNT(*) FROM spp_cenlawpenspp"}
+{"question": "Có bao nhiêu bản ghi trong bảng bản án?", "sql": "SELECT COUNT(*) FROM spp_centence"}
+{"question": "Có bao nhiêu bản ghi trong bảng người bị thiệt hại?", "sql": "SELECT COUNT(*) FROM spp_damaged"}
+{"question": "Có bao nhiêu bản ghi trong bảng quyết định?", "sql": "SELECT COUNT(*) FROM spp_decision"}
+{"question": "Có bao nhiêu bản ghi trong bảng quyết định tư pháp?", "sql": "SELECT COUNT(*) FROM spp_decision_judicial"}
+{"question": "Có bao nhiêu bản ghi trong bảng dữ liệu quyết định?", "sql": "SELECT COUNT(*) FROM spp_deci_data"}
+{"question": "Có bao nhiêu bản ghi trong bảng thi hành án?", "sql": "SELECT COUNT(*) FROM spp_execution"}
+{"question": "Có bao nhiêu bản ghi trong bảng chuyển thi hành án?", "sql": "SELECT COUNT(*) FROM spp_executrans"}
+{"question": "Có bao nhiêu bản ghi trong bảng chi tiết câu hỏi thường gặp?", "sql": "SELECT COUNT(*) FROM spp_faq_detail"}
+{"question": "Có bao nhiêu bản ghi trong bảng đầu tư?", "sql": "SELECT COUNT(*) FROM spp_investment"}
+{"question": "Có bao nhiêu bản ghi trong bảng phán quyết?", "sql": "SELECT COUNT(*) FROM spp_judgement"}
+{"question": "Có bao nhiêu bản ghi trong bảng phán quyết viện kiểm sát?", "sql": "SELECT COUNT(*) FROM spp_judgementspp"}
+{"question": "Có bao nhiêu bản ghi trong bảng biện pháp ngăn chặn?", "sql": "SELECT COUNT(*) FROM lst_prevent"}
+{"question": "Có bao nhiêu bản ghi trong bảng đăng ký bị can?", "sql": "SELECT COUNT(*) FROM spp_regacc"}
+{"question": "Có bao nhiêu bản ghi trong bảng đăng ký điều tra viên?", "sql": "SELECT COUNT(*) FROM spp_regins"}
+{"question": "Có bao nhiêu bản ghi trong bảng đăng ký?", "sql": "SELECT COUNT(*) FROM spp_register"}
+{"question": "Có bao nhiêu bản ghi trong bảng báo cáo kháng cáo?", "sql": "SELECT COUNT(*) FROM spp_report_appeal"}
+{"question": "Có bao nhiêu bản ghi trong bảng mối quan hệ viện kiểm sát và công an?", "sql": "SELECT COUNT(*) FROM spp_spppol"}
+{"question": "Có bao nhiêu bản ghi trong bảng mối quan hệ viện kiểm sát và tòa án?", "sql": "SELECT COUNT(*) FROM spp_sppspc"}
+{"question": "Có bao nhiêu bản ghi trong bảng mối quan hệ viện kiểm sát với viện kiểm sát?", "sql": "SELECT COUNT(*) FROM spp_sppspp"}
+{"question": "Có bao nhiêu bản ghi trong bảng thống kê?", "sql": "SELECT COUNT(*) FROM spp_statistica"}
+{"question": "Có bao nhiêu bản ghi trong bảng chuyển vụ án?", "sql": "SELECT COUNT(*) FROM spp_transfer"}
+{"question": "Có bao nhiêu bản ghi trong bảng vi phạm?", "sql": "SELECT COUNT(*) FROM spp_violantion"}
+{"question": "Có bao nhiêu bản ghi trong bảng danh mục kháng nghị?", "sql": "SELECT COUNT(*) FROM lst_against"}
+{"question": "Có bao nhiêu bản ghi trong bảng kết quả kháng nghị?", "sql": "SELECT COUNT(*) FROM lst_against_result"}
+{"question": "Có bao nhiêu bản ghi trong bảng danh mục kháng cáo?", "sql": "SELECT COUNT(*) FROM lst_appeal"}
+{"question": "Có bao nhiêu bản ghi trong bảng quân đội?", "sql": "SELECT COUNT(*) FROM lst_army"}
+{"question": "Có bao nhiêu bản ghi trong bảng biên phòng?", "sql": "SELECT COUNT(*) FROM lst_borderguards"}
+{"question": "Có bao nhiêu bản ghi trong bảng mã?", "sql": "SELECT COUNT(*) FROM lst_code"}
+{"question": "Có bao nhiêu bản ghi trong bảng kết luận?", "sql": "SELECT COUNT(*) FROM lst_conclution"}
+{"question": "Có bao nhiêu bản ghi trong bảng quốc gia?", "sql": "SELECT COUNT(*) FROM lst_country"}
+{"question": "Có bao nhiêu bản ghi trong bảng quốc gia mới?", "sql": "SELECT COUNT(*) FROM lst_country_new"}
+{"question": "Có bao nhiêu bản ghi trong bảng loại quyết định?", "sql": "SELECT COUNT(*) FROM lst_decision"}
+{"question": "Có bao nhiêu bản ghi trong bảng loại quyết định (chi tiết)?", "sql": "SELECT COUNT(*) FROM lst_decitype"}
+{"question": "Có bao nhiêu bản ghi trong bảng mẫu quyết định?", "sql": "SELECT COUNT(*) FROM lst_deci_template"}
+{"question": "Có bao nhiêu bản ghi trong bảng vật chứng?", "sql": "SELECT COUNT(*) FROM lst_exhibit"}
+{"question": "Có bao nhiêu bản ghi trong bảng ma túy?", "sql": "SELECT COUNT(*) FROM lst_heroin"}
+{"question": "Có bao nhiêu bản ghi trong bảng kiểm sát viên?", "sql": "SELECT COUNT(*) FROM lst_inspector"}
+{"question": "Có bao nhiêu bản ghi trong bảng kiến thức?", "sql": "SELECT COUNT(*) FROM lst_knowledge"}
+{"question": "Có bao nhiêu bản ghi trong bảng luật?", "sql": "SELECT COUNT(*) FROM lst_law"}
+{"question": "Có bao nhiêu bản ghi trong bảng nhóm luật?", "sql": "SELECT COUNT(*) FROM lst_lawgroup"}
+{"question": "Có bao nhiêu bản ghi trong bảng luật tổng hợp?", "sql": "SELECT COUNT(*) FROM lst_law_gen"}
+{"question": "Có bao nhiêu bản ghi trong bảng luật ma túy?", "sql": "SELECT COUNT(*) FROM lst_law_heroin"}
+{"question": "Có bao nhiêu bản ghi trong bảng địa điểm?", "sql": "SELECT COUNT(*) FROM lst_location"}
+{"question": "Có bao nhiêu bản ghi trong bảng dân tộc?", "sql": "SELECT COUNT(*) FROM lst_nation"}
+{"question": "Có bao nhiêu bản ghi trong bảng nghề nghiệp?", "sql": "SELECT COUNT(*) FROM lst_occupation"}
+{"question": "Có bao nhiêu bản ghi trong bảng cơ quan?", "sql": "SELECT COUNT(*) FROM lst_office"}
+{"question": "Có bao nhiêu bản ghi trong bảng đảng?", "sql": "SELECT COUNT(*) FROM lst_party"}
+{"question": "Có bao nhiêu bản ghi trong bảng hình phạt?", "sql": "SELECT COUNT(*) FROM lst_penalty"}
+{"question": "Có bao nhiêu bản ghi trong bảng chính trị?", "sql": "SELECT COUNT(*) FROM lst_pol"}
+{"question": "Có bao nhiêu bản ghi trong bảng công an?", "sql": "SELECT COUNT(*) FROM lst_police"}
+{"question": "Có bao nhiêu bản ghi trong bảng nhà giam?", "sql": "SELECT COUNT(*) FROM lst_prison"}
+{"question": "Có bao nhiêu bản ghi trong bảng cơ quan ban hành?", "sql": "SELECT COUNT(*) FROM lst_promulgateorg"}
+{"question": "Có bao nhiêu bản ghi trong bảng kiểm lâm?", "sql": "SELECT COUNT(*) FROM lst_ranger"}
+{"question": "Có bao nhiêu bản ghi trong bảng lý do?", "sql": "SELECT COUNT(*) FROM lst_reason"}
+{"question": "Có bao nhiêu bản ghi trong bảng tôn giáo?", "sql": "SELECT COUNT(*) FROM lst_religion"}
+{"question": "Có bao nhiêu bản ghi trong bảng giải quyết?", "sql": "SELECT COUNT(*) FROM lst_resolve"}
+{"question": "Có bao nhiêu bản ghi trong bảng người ký?", "sql": "SELECT COUNT(*) FROM lst_signer"}
+{"question": "Có bao nhiêu bản ghi trong bảng tòa án cấp cao?", "sql": "SELECT COUNT(*) FROM lst_spc"}
+{"question": "Có bao nhiêu bản ghi trong bảng viện kiểm sát?", "sql": "SELECT COUNT(*) FROM lst_spp"}
+{"question": "Có bao nhiêu bản ghi trong bảng chuyển giao?", "sql": "SELECT COUNT(*) FROM lst_transfer"}

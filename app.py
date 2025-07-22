@@ -1,9 +1,9 @@
-
+from transformers import MT5ForConditionalGeneration, MT5Tokenizer
 import os
 import glob
 import jnius_config
 
-# Thiết lập classpath cho JVM trước khi import bất kỳ gì dùng jnius
+# Thiết lập classpath cho JVM
 vncorenlp_dir = "/opt/chatbot_env/vncorenlp"
 jar_path = os.path.join(vncorenlp_dir, "VnCoreNLP-1.2.jar")
 libs_jars = glob.glob(os.path.join(vncorenlp_dir, "libs", "*.jar"))
@@ -17,89 +17,115 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import oracledb
 from typing import List
+from alias_mapping import alias_mapping
 
-# Khởi tạo FastAPI
+# Load model MT5 đã fine-tune
+model_dir = "./model/vietext2sql_mt5"
+t5_tokenizer = MT5Tokenizer.from_pretrained(model_dir)
+t5_model = MT5ForConditionalGeneration.from_pretrained(model_dir)
+
+# Tạo FastAPI app
 app = FastAPI(title="ChatGPT-style QA for Oracle", version="1.0")
 
-# Thêm middleware CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],            # Cho phép mọi origin
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],           # Cho phép tất cả phương thức (POST, GET, OPTIONS…)
-    allow_headers=["*"],           # Cho phép mọi header
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# Cấu hình Oracle DSN & tài khoản
+# Kết nối Oracle
 ORACLE_USER = "tlu"
 ORACLE_PWD = "tlu"
-ORACLE_DSN = "45.122.253.178:2151/cdb2"  # host:port/service
+ORACLE_DSN = "45.122.253.178:2151/cdb2"
+try:
+    connection = oracledb.connect(user=ORACLE_USER, password=ORACLE_PWD, dsn=ORACLE_DSN)
+except Exception as e:
+    print("Lỗi kết nối Oracle:", e)
+    connection = None
 
-# Kết nối Oracle
-connection = oracledb.connect(user=ORACLE_USER, password=ORACLE_PWD, dsn=ORACLE_DSN)
-
-# Tải mô hình PhoNLP pre-trained (1 lần)
-MODEL_DIR = '/opt/chatbot_env/pretrained_phonlp'
+# Tải PhoNLP
+MODEL_DIR = "/opt/chatbot_env/pretrained_phonlp"
 if not os.path.isdir(MODEL_DIR) or not os.listdir(MODEL_DIR):
     phonlp_download(save_dir=MODEL_DIR)
-nlp_model = phonlp_load(save_dir=MODEL_DIR)
 
-# Khởi tạo bộ phân tách từ tiếng Việt (VnCoreNLP)
-rdrsegmenter = VnCoreNLP(annotators=["wseg"], save_dir=vncorenlp_dir)
+try:
+    nlp_model = phonlp_load(save_dir=MODEL_DIR)
+except Exception as e:
+    print(f"Lỗi tải PhoNLP: {e}")
+    nlp_model = None
 
-# Khai báo model cho request/response
+# Tải VnCoreNLP
+try:
+    rdrsegmenter = VnCoreNLP(annotators=["wseg"], save_dir=vncorenlp_dir)
+except Exception as e:
+    print(f"Lỗi khởi tạo VnCoreNLP: {e}")
+    rdrsegmenter = None
+
+# Định nghĩa schema API
 class Question(BaseModel):
     question: str
 
 class Answer(BaseModel):
     answer: str
 
-# API xử lý câu hỏi
 @app.post("/api/chat", response_model=Answer)
 def answer_question(q: Question):
     user_question = q.question
 
-    # Bước 1: Tách từ => danh sách token
+    if not rdrsegmenter or not nlp_model:
+        return Answer(answer="Lỗi tải mô hình xử lý ngôn ngữ.")
+
+    # Tách từ và phân tích
     tokens: List[str] = rdrsegmenter.word_segment(user_question)
-
-    # Bước 2: Nối thành chuỗi cách nhau bởi dấu space
     text_for_annotate = " ".join(tokens)
+    _ = nlp_model.annotate(text=text_for_annotate)
 
-    # Bước 3: Phân tích ngôn ngữ với PhoNLP (bây giờ đúng kiểu str)
-    analysis = nlp_model.annotate(text=text_for_annotate)
+    # Gợi nhớ từ khóa
+    for keyword in alias_mapping:
+        if keyword in user_question.lower():
+            mapped_value = alias_mapping[keyword]
+            print(f"Từ '{keyword}' ánh xạ tới: {mapped_value}")
 
-    # Bước 4: Sinh câu SQL từ câu hỏi
-    sql_query = generate_sql_from_question(user_question, analysis)
+    # Sinh câu SQL từ MT5
+    sql_query = generate_sql_from_question(user_question)
+    print(f"[INFO] SQL sinh ra: {sql_query}")
 
-    # Bước 5: Thực thi SQL và định dạng kết quả
+    # Thực thi SQL và trả kết quả
     result_text = execute_sql_and_format(sql_query)
-
     return Answer(answer=result_text)
 
+def generate_sql_from_question(question_text: str) -> str:
+    input_ids = t5_tokenizer.encode(question_text.lower(), return_tensors='pt')
+    output_ids = t5_model.generate(input_ids, max_length=200, num_beams=4, early_stopping=True)
+    sql = t5_tokenizer.decode(output_ids[0], skip_special_tokens=True)
+    return sql
 
-def generate_sql_from_question(question_text, analysis):
-    text = question_text.lower()
-    if "bao nhiêu" in text and "nhân viên" in text:
-        return "SELECT COUNT(*) FROM nhan_vien"
-    return "SELECT 'Chua ho tro' FROM dual"
+def execute_sql_and_format(sql: str) -> str:
+    if not connection:
+        return "Lỗi kết nối CSDL."
 
-def execute_sql_and_format(sql):
     cur = connection.cursor()
     try:
         cur.execute(sql)
     except Exception as e:
         return f"Lỗi khi thực thi SQL: {e}"
+
     rows = cur.fetchall()
     if not rows:
         return "Không tìm thấy dữ liệu phù hợp."
+
     if len(rows) == 1 and len(rows[0]) == 1:
         return f"Kết quả là {rows[0][0]}."
-    result_lines = []
+
     col_names = [d[0] for d in cur.description]
+    result_lines = []
     for r in rows:
         row_str = ", ".join(f"{col_names[i]}: {r[i]}" for i in range(len(r)))
         result_lines.append(row_str)
-    return ";\n".join(result_lines)
+
+    return "\n".join(result_lines)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

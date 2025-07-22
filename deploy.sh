@@ -3,5 +3,5 @@ echo "👉 Pulling latest code from GitHub..."
 git reset --hard
 git clean -fd
 git pull origin main
-cp app.py ..
+cp *.py ..
 echo "✅ Code updated at $(date)" >> deploy.log
