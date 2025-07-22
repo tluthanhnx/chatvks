@@ -1,7 +1,15 @@
-from transformers import MT5ForConditionalGeneration, MT5Tokenizer
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List
+import oracledb
 import os
 import glob
 import jnius_config
+
+# Chỉ dùng alias_mapping, bỏ MT5
+from alias_mapping import alias_mapping
 
 # Thiết lập classpath cho JVM
 vncorenlp_dir = "/opt/chatbot_env/vncorenlp"
@@ -12,20 +20,9 @@ jnius_config.set_classpath(jar_path, *libs_jars)
 from py_vncorenlp import VnCoreNLP
 from phonlp import download as phonlp_download, load as phonlp_load
 import uvicorn
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import oracledb
-from typing import List
-from alias_mapping import alias_mapping
-
-# Load model MT5 đã fine-tune
-model_dir = "./vncorenlp/models/vietext2sql_mt5"
-t5_tokenizer = MT5Tokenizer.from_pretrained(model_dir)
-t5_model = MT5ForConditionalGeneration.from_pretrained(model_dir)
 
 # Tạo FastAPI app
-app = FastAPI(title="ChatGPT-style QA for Oracle", version="1.0")
+app = FastAPI(title="ChatGPT-style QA for Oracle (No MT5)", version="1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -77,31 +74,18 @@ def answer_question(q: Question):
     if not rdrsegmenter or not nlp_model:
         return Answer(answer="Lỗi tải mô hình xử lý ngôn ngữ.")
 
-    # Tách từ và phân tích
     tokens: List[str] = rdrsegmenter.word_segment(user_question)
     text_for_annotate = " ".join(tokens)
     _ = nlp_model.annotate(text=text_for_annotate)
 
-    # Gợi nhớ từ khóa
     for keyword in alias_mapping:
         if keyword in user_question.lower():
-            mapped_value = alias_mapping[keyword]
-            print(f"Từ '{keyword}' ánh xạ tới: {mapped_value}")
+            sql_query = alias_mapping[keyword]
+            print(f"[INFO] SQL ánh xạ từ alias: {sql_query}")
+            result_text = execute_sql_and_format(sql_query)
+            return Answer(answer=result_text)
 
-    # Sinh câu SQL từ MT5
-    sql_query = generate_sql_from_question(user_question)
-    print(f"[INFO] SQL sinh ra: {sql_query}")
-
-    # Thực thi SQL và trả kết quả
-    print("Câu SQL được sinh ra:", sql_query)
-    result_text = execute_sql_and_format(sql_query)
-    return Answer(answer=result_text)
-
-def generate_sql_from_question(question_text: str) -> str:
-    input_ids = t5_tokenizer.encode(question_text.lower(), return_tensors='pt')
-    output_ids = t5_model.generate(input_ids, max_length=200, num_beams=4, early_stopping=True)
-    sql = t5_tokenizer.decode(output_ids[0], skip_special_tokens=True)
-    return sql
+    return Answer(answer="Không hiểu câu hỏi của bạn. Hãy thử lại với câu hỏi khác.")
 
 def execute_sql_and_format(sql: str) -> str:
     if not connection:
