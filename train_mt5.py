@@ -2,19 +2,20 @@ from transformers import MT5ForConditionalGeneration, MT5Tokenizer, TrainingArgu
 from datasets import load_dataset
 
 # Load pre-trained model and tokenizer
-model_name = "google/mt5-base"
+model_name = "google/mt5-small"  # Nhẹ hơn rất nhiều
 tokenizer = MT5Tokenizer.from_pretrained(model_name)
 model = MT5ForConditionalGeneration.from_pretrained(model_name)
 
-# Load dataset without using cache
+# Load dataset từ JSON
 data = load_dataset(
     'json',
-    data_files={'train': 'train.json', 'validation': 'dev.json'},
-    cache_dir=None,
-    keep_in_memory=True
+    data_files={
+        'train': 'train.json',
+        'validation': 'dev.json'  # cần có ít nhất 1 mẫu trong dev.json
+    }
 )
 
-# Preprocessing
+# Tokenize dữ liệu
 def preprocess(batch):
     inputs = tokenizer(batch['question'], max_length=128, truncation=True, padding="max_length")
     labels = tokenizer(batch['sql'], max_length=256, truncation=True, padding="max_length")
@@ -23,18 +24,18 @@ def preprocess(batch):
 
 data_enc = data.map(preprocess, batched=True, remove_columns=['question', 'sql'])
 
-# Training config
+# Huấn luyện
 training_args = TrainingArguments(
     output_dir="output",
     evaluation_strategy="epoch",
     learning_rate=5e-5,
-    per_device_train_batch_size=8,
-    num_train_epochs=50,
+    per_device_train_batch_size=2,     # 👈 Giảm batch size
+    num_train_epochs=10,
     save_strategy="epoch",
-    logging_steps=50,
+    logging_steps=10,
     save_total_limit=2,
     weight_decay=0.01,
-    fp16=False,
+    fp16=False,                        # 👈 Tắt FP16 nếu dùng CPU
     push_to_hub=False,
 )
 
