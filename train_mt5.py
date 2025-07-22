@@ -6,24 +6,24 @@ model_name = "google/mt5-base"
 tokenizer = MT5Tokenizer.from_pretrained(model_name)
 model = MT5ForConditionalGeneration.from_pretrained(model_name)
 
-# Load dataset from JSON files
+# Load dataset without using cache
 data = load_dataset(
     'json',
     data_files={'train': 'train.json', 'validation': 'dev.json'},
-    cache_dir="/tmp/huggingface_datasets",  # hoặc thư mục bất kỳ
-    keep_in_memory=True                     # Đọc thẳng vào RAM, không cache
+    cache_dir=None,
+    keep_in_memory=True
 )
-# Preprocessing function
+
+# Preprocessing
 def preprocess(batch):
     inputs = tokenizer(batch['question'], max_length=128, truncation=True, padding="max_length")
     labels = tokenizer(batch['sql'], max_length=256, truncation=True, padding="max_length")
     inputs['labels'] = labels['input_ids']
     return inputs
 
-# Apply preprocessing
 data_enc = data.map(preprocess, batched=True, remove_columns=['question', 'sql'])
 
-# Define training arguments
+# Training config
 training_args = TrainingArguments(
     output_dir="output",
     evaluation_strategy="epoch",
@@ -34,11 +34,10 @@ training_args = TrainingArguments(
     logging_steps=50,
     save_total_limit=2,
     weight_decay=0.01,
-    fp16=True,
+    fp16=False,
     push_to_hub=False,
 )
 
-# Create Trainer
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -46,6 +45,5 @@ trainer = Trainer(
     eval_dataset=data_enc['validation'],
 )
 
-# Train and save model
 trainer.train()
 trainer.save_model("output/best_model")
