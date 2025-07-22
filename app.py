@@ -67,25 +67,25 @@ class Question(BaseModel):
 class Answer(BaseModel):
     answer: str
 
+
 @app.post("/api/chat", response_model=Answer)
 def answer_question(q: Question):
-    user_question = q.question
+    user_question = q.question.lower()
 
-    if not rdrsegmenter or not nlp_model:
-        return Answer(answer="Lỗi tải mô hình xử lý ngôn ngữ.")
-
-    tokens: List[str] = rdrsegmenter.word_segment(user_question)
-    text_for_annotate = " ".join(tokens)
-    _ = nlp_model.annotate(text=text_for_annotate)
-
+    # Check alias mapping
     for keyword in alias_mapping:
-        if keyword in user_question.lower():
-            sql_query = alias_mapping[keyword]
-            print(f"[INFO] SQL ánh xạ từ alias: {sql_query}")
+        if keyword in user_question:
+            mapped_sql = alias_mapping[keyword]
+
+            # Lấy phần nội dung sau từ khóa làm giá trị động
+            value = user_question.split(keyword, 1)[-1].strip().strip("?.,")
+            sql_query = mapped_sql.replace("{value}", value)
+
+            print(f"[INFO] SQL sinh ra từ alias_mapping: {sql_query}")
             result_text = execute_sql_and_format(sql_query)
             return Answer(answer=result_text)
 
-    return Answer(answer="Không hiểu câu hỏi của bạn. Hãy thử lại với câu hỏi khác.")
+    return Answer(answer="Không hiểu câu hỏi hoặc chưa được hỗ trợ.")
 
 def execute_sql_and_format(sql: str) -> str:
     if not connection:
