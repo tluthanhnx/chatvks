@@ -20,7 +20,7 @@ from typing import List
 from alias_mapping import alias_mapping
 
 # Load model MT5 đã fine-tune
-model_dir = "./model/vietext2sql_mt5"
+model_dir = "./vncorenlp/models/vietext2sql_mt5"
 t5_tokenizer = MT5Tokenizer.from_pretrained(model_dir)
 t5_model = MT5ForConditionalGeneration.from_pretrained(model_dir)
 
