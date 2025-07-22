@@ -1,5 +1,5 @@
 alias_mapping = {
-    "vụ án": "spp_case",
+    "vụ án": "Select * from spp_case where CASENAME='Tên vụ án'",
     "bị can": "spp_accused",
     "tội danh bị can": "spp_accusedlaw",
     "kháng nghị": "spp_against",
