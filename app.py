@@ -93,6 +93,7 @@ def answer_question(q: Question):
     print(f"[INFO] SQL sinh ra: {sql_query}")
 
     # Thực thi SQL và trả kết quả
+    print("Câu SQL được sinh ra:", sql_query)
     result_text = execute_sql_and_format(sql_query)
     return Answer(answer=result_text)
 
@@ -108,6 +109,7 @@ def execute_sql_and_format(sql: str) -> str:
 
     cur = connection.cursor()
     try:
+        print("SQL:", sql)
         cur.execute(sql)
     except Exception as e:
         return f"Lỗi khi thực thi SQL: {e}"
