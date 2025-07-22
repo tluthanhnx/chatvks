@@ -9,7 +9,7 @@ model = MT5ForConditionalGeneration.from_pretrained(model_name)
 # Load dataset without using cache
 data = load_dataset(
     'json',
-    data_files={'train': 'train.json'},
+    data_files={'train': 'train.json', 'validation': 'dev.json'},
     cache_dir=None,
     keep_in_memory=True
 )

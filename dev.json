@@ -1,0 +1,6 @@
+[
+  {
+    "question": "Có bao nhiêu vụ án?",
+    "sql": "SELECT COUNT(*) FROM spp_case;"
+  }
+]
