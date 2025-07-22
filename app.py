@@ -77,14 +77,13 @@ def answer_question(q: Question):
         if keyword in user_question:
             mapped_sql = alias_mapping[keyword]
 
-            # Lấy phần nội dung sau từ khóa làm giá trị động
+            # Lấy phần còn lại làm giá trị
             value = user_question.split(keyword, 1)[-1].strip().strip("?.,")
             sql_query = mapped_sql.replace("{value}", value)
 
             print(f"[INFO] SQL sinh ra từ alias_mapping: {sql_query}")
             result_text = execute_sql_and_format(sql_query)
             return Answer(answer=result_text)
-
     return Answer(answer="Không hiểu câu hỏi hoặc chưa được hỗ trợ.")
 
 def execute_sql_and_format(sql: str) -> str:
