@@ -7,8 +7,12 @@ tokenizer = MT5Tokenizer.from_pretrained(model_name)
 model = MT5ForConditionalGeneration.from_pretrained(model_name)
 
 # Load dataset from JSON files
-data = load_dataset('json', data_files={'train': 'train.json', 'validation': 'dev.json'})
-
+data = load_dataset(
+    'json',
+    data_files={'train': 'train.json', 'validation': 'dev.json'},
+    cache_dir="/tmp/huggingface_datasets",  # hoặc thư mục bất kỳ
+    keep_in_memory=True                     # Đọc thẳng vào RAM, không cache
+)
 # Preprocessing function
 def preprocess(batch):
     inputs = tokenizer(batch['question'], max_length=128, truncation=True, padding="max_length")
