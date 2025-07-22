@@ -47,4 +47,4 @@ trainer = Trainer(
 )
 
 trainer.train()
-trainer.save_model("output/best_model")
+trainer.save_model("model/vietext2sql_mt5")
