@@ -47,4 +47,5 @@ trainer = Trainer(
 )
 
 trainer.train()
+from transformers import MT5Tokenizer
 trainer.save_model("model/vietext2sql_mt5")
