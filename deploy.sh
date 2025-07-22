@@ -4,4 +4,5 @@ git reset --hard
 git clean -fd
 git pull origin main
 cp *.py ..
+cp *.json ..
 echo "✅ Code updated at $(date)" >> deploy.log
