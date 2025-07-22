@@ -33,8 +33,8 @@ app.add_middleware(
 )
 
 # Kết nối Oracle
-ORACLE_USER = "tlu"
-ORACLE_PWD = "tlu"
+ORACLE_USER = "spp"
+ORACLE_PWD = "Ab123456"
 ORACLE_DSN = "45.122.253.178:2151/cdb2"
 try:
     connection = oracledb.connect(user=ORACLE_USER, password=ORACLE_PWD, dsn=ORACLE_DSN)
