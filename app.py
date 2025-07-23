@@ -112,9 +112,8 @@ def execute_sql_and_format(sql: str) -> str:
     if len(rows) <= 20:
         header = "| " + " | ".join(col_names) + " |"
         divider = "| " + " | ".join(["---"] * len(col_names)) + " |"
-        table_rows = ["| " + " | ".join(str(cell) for cell in r) + " |" for r in rows]
+        table_rows = ["| " + " | ".join(str(cell) for cell in row) + " |" for row in rows]
         return "\n".join([header, divider] + table_rows)
-    # Quá nhiều dòng -> chuyển sang JSON format
     data = [dict(zip(col_names, row)) for row in rows]
     return f"```json\n{json.dumps(data, indent=2, ensure_ascii=False)}\n```"
 
