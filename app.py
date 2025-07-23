@@ -104,22 +104,47 @@ def execute_sql_and_format(sql: str) -> str:
     if len(rows) == 1 and len(rows[0]) == 1:
         return f"Kết quả là {rows[0][0]}."
 
-    import json
+import json
 
-    col_names = [d[0] for d in cur.description]
+def execute_sql_and_format(sql: str) -> str:
+    if not connection:
+        return "Lỗi kết nối CSDL."
 
-    # Hiển thị bảng markdown nếu ít hơn 20 dòng
+    cur = connection.cursor()
+    try:
+        print("SQL:", sql)
+        cur.execute(sql)
+    except Exception as e:
+        return f"Lỗi khi thực thi SQL: {e}"
+
+    rows = cur.fetchall()
+    if not rows:
+        return "Không tìm thấy dữ liệu phù hợp."
+
+    col_names = [desc[0] for desc in cur.description]
+
+    # ✅ Markdown table nếu <= 20 dòng
     if len(rows) <= 20:
-        header = "| " + " | ".join(col_names) + " |"
-        divider = "| " + " | ".join(["---"] * len(col_names)) + " |"
-        table_rows = []
-        for row in rows:
-            row_values = [str(cell).replace("|", "\\|") for cell in row]  # escape dấu | nếu có
-            table_rows.append("| " + " | ".join(row_values) + " |")
-        return "\n".join([header, divider] + table_rows)
+        lines = []
 
+        # Header
+        lines.append("| " + " | ".join(col_names) + " |")
+        lines.append("|" + "|".join(["---"] * len(col_names)) + "|")
+
+        # Rows
+        for row in rows:
+            # Escape ký tự | và xuống dòng nếu có
+            escaped = [str(cell).replace("|", "\\|").replace("\n", " ") for cell in row]
+            lines.append("| " + " | ".join(escaped) + " |")
+
+        return "\n".join(lines)
+
+    # ✅ JSON nếu quá dài
     data = [dict(zip(col_names, row)) for row in rows]
     return f"```json\n{json.dumps(data, indent=2, ensure_ascii=False)}\n```"
+
+   
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
