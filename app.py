@@ -104,13 +104,19 @@ def execute_sql_and_format(sql: str) -> str:
     if len(rows) == 1 and len(rows[0]) == 1:
         return f"Kết quả là {rows[0][0]}."
 
-    col_names = [d[0] for d in cur.description]
-    result_lines = []
-    for r in rows:
-        row_str = ", ".join(f"{col_names[i]}: {r[i]}" for i in range(len(r)))
-        result_lines.append(row_str)
+    import json
 
-    return "\n".join(result_lines)
+    col_names = [d[0] for d in cur.description]
+
+    # Hiển thị bảng markdown nếu ít hơn 20 dòng
+    if len(rows) <= 20:
+        header = "| " + " | ".join(col_names) + " |"
+        divider = "| " + " | ".join(["---"] * len(col_names)) + " |"
+        table_rows = ["| " + " | ".join(str(cell) for cell in r) + " |" for r in rows]
+        return "\n".join([header, divider] + table_rows)
+    # Quá nhiều dòng -> chuyển sang JSON format
+    data = [dict(zip(col_names, row)) for row in rows]
+    return f"```json\n{json.dumps(data, indent=2, ensure_ascii=False)}\n```"
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
