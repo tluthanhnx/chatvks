@@ -1,5 +1,5 @@
 alias_mapping = {
-    "danh sách bị can trong vụ án": """
+    "bị can trong vụ án": """
         SELECT ACCUCODE, FULLNAME, BIRTHDAY, SEX, CRIMDATE, CRTDATE, LAWCODE
         FROM spp_accused
         WHERE CASECODE IN (
